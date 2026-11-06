@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10243a">
+<title>KUENJUNG AUTO SPARE | SsangYong Parts</title>
+<!-- Include localForage for IndexedDB support (bypasses localStorage 5MB limit)[cite: 1] -->
+<script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
+<style>
+:root{--navy:#10243a;--navy2:#183b59;--orange:#f47721;--orange2:#ff9a45;--cream:#fff8f1;--ink:#172536;--muted:#718096;--line:#e8edf2;--white:#fff;--green:#16845b;--danger:#dc2626}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f5f7fa;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+a{color:inherit;text-decoration:none}.topbar{background:var(--navy);color:#fff;padding:10px 5.2%;display:flex;justify-content:space-between;gap:15px;align-items:center;font-size:12px}.topbar strong{color:#ffbd79}
+header{background:#fff;position:sticky;top:0;z-index:10;box-shadow:0 5px 22px #10243a0c}.head{max-width:1450px;margin:auto;padding:18px 5%;display:flex;align-items:center;gap:26px}.brand{display:flex;align-items:center;gap:12px;min-width:255px; cursor:pointer;}
+.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,var(--orange),#ffb05f);display:grid;place-items:center;color:#fff;font-size:24px;box-shadow:0 8px 18px #f4772138;overflow:hidden;}
+.logo img { width:100%; height:100%; object-fit:cover; }
+.brand-name{font-size:21px;font-weight:900;letter-spacing:-.8px;line-height:1.1}.brand-name span{color:var(--orange)}.tagline{font-size:11px;color:var(--muted);margin-top:4px}
+.search{flex:1;display:flex;align-items:center;background:#f4f6f8;border:1px solid #e8edf2;border-radius:15px;padding:0 16px;height:49px;gap:10px}.search input{border:0;outline:0;background:transparent;width:100%;font-size:14px;color:var(--ink)}
+.head-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.pill{border:1px solid var(--line);padding:10px 14px;border-radius:13px;font-size:12px;font-weight:750;white-space:nowrap;cursor:pointer}
+.pill.orange{background:var(--orange);border-color:var(--orange);color:#fff}
+.pill.dark{background:var(--navy);border-color:var(--navy);color:#fff}
+.pill.purple{background:#7c3aed;border-color:#7c3aed;color:#fff}
+
+main{max-width:1450px;margin:26px auto;padding:0 5%}
+.hero{border-radius:25px;overflow:hidden;background:linear-gradient(110deg,#fff0e3 0%,#ffcfaa 46%,var(--navy2) 46%,var(--navy) 100%);display:grid;grid-template-columns:1.03fr .97fr;min-height:280px;box-shadow:0 18px 40px #10243a13}
+.hero-copy{padding:43px 45px;position:relative;z-index:1}.eyebrow{font-size:11px;font-weight:850;letter-spacing:2px;text-transform:uppercase;color:#b65316}
+.hero h1{font-size:clamp(30px,4vw,53px);line-height:1.03;letter-spacing:-2px;margin:13px 0;color:#14283c}.hero h1 span{color:var(--orange)}
+.hero p{color:#536275;font-size:15px;max-width:470px;line-height:1.65}
+.cta{display:inline-flex;align-items:center;gap:10px;margin-top:12px;background:var(--orange);color:#fff;padding:14px 21px;border-radius:12px;font-size:13px;font-weight:800;box-shadow:0 8px 18px #f4772140}
+.hero-art{display:flex;align-items:center;justify-content:center;position:relative;color:#fff;padding:25px;background:radial-gradient(circle at 60% 40%,#3b6783 0,#173b58 45%,var(--navy) 80%)}
+.gear{width:165px;height:165px;border:16px dashed var(--orange2);border-radius:50%;display:grid;place-items:center;font-size:54px;color:#ffbf89;box-shadow:0 0 0 17px #ffffff0a,0 0 60px #ff8a3530}
+.hero-art:after{content:"GENUINE FITMENT • RELIABLE SERVICE";position:absolute;bottom:27px;font-size:10px;letter-spacing:2px;color:#c5d8e5}
+
+.trust{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0 29px}
+.trust-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:center}
+.trust-icon{width:40px;height:40px;border-radius:12px;background:#fff0e4;color:var(--orange);display:grid;place-items:center;font-size:20px}
+.trust-card b{font-size:12px;display:block}.trust-card small{color:var(--muted);font-size:11px}
+
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:29px 0 15px}
+.section-head h2{font-size:23px;letter-spacing:-.7px;margin:0}
+.section-head p{margin:5px 0 0;color:var(--muted);font-size:12px}
+.count{font-size:12px;color:var(--muted);font-weight:700}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.filter{border:1px solid #e2e8ef;background:#fff;padding:9px 14px;border-radius:999px;font-size:11px;font-weight:750;color:#5c6b7b;cursor:pointer}
+.filter.active,.filter:hover{background:var(--navy);border-color:var(--navy);color:#fff}
+
+.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.product{background:#fff;border:1px solid #e8edf2;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.2s;position:relative}
+.product:hover{transform:translateY(-3px);box-shadow:0 14px 30px #10243a12;border-color:#ffd2b3}
+.product-img-box{width:100%;height:140px;background:#f1f5f9;position:relative;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #e8edf2;overflow:hidden}
+.product-img-box img{width:100%;height:100%;object-fit:cover}
+.product-img-box .default-icon{font-size:36px;color:#cbd5e1}
+.photo-upload-btn{position:absolute;bottom:8px;right:8px;background:rgba(15,23,42,0.75);color:#fff;border:none;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;backdrop-filter:blur(2px)}
+.photo-upload-btn:hover{background:var(--orange)}
+
+.product-content{padding:17px;display:flex;flex-direction:column;flex:1}
+.product-top{display:flex;justify-content:space-between;align-items:center}
+.tag{font-size:9px;font-weight:850;letter-spacing:.5px;text-transform:uppercase;color:#16845b;background:#e9f8f1;padding:6px 8px;border-radius:999px}
+.product h3{font-size:14px;line-height:1.35;margin:10px 0 6px}
+.fitment{font-size:11px;color:#728093;line-height:1.5;min-height:28px}
+.remark{font-size:10px;color:#a45b2c;margin-top:3px}
+.product-bottom{margin-top:auto;padding-top:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.price{font-weight:900;font-size:15px;color:var(--orange)}
+.stock{font-size:10px;color:var(--green);font-weight:750}.stock.ask{color:#a16a32}
+
+.admin-row{display:flex;gap:6px;margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+.btn-sm{padding:4px 8px;font-size:10px;font-weight:700;border-radius:6px;border:none;cursor:pointer}
+.btn-edit{background:#e2e8f0;color:var(--ink)}.btn-del{background:#fee2e2;color:var(--danger)}
+.wa{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#eaf8f0;color:#087847;border:1px solid #d5f0e1;border-radius:10px;padding:10px 12px;font-size:11px;font-weight:850;margin-top:10px;cursor:pointer}.wa:hover{background:#d8f2e5}
+.empty{grid-column:1/-1;text-align:center;padding:45px 20px;background:#fff;border:1px dashed #d8e0e8;border-radius:18px;color:var(--muted)}
+
+.promo{margin:30px 0 22px;border-radius:22px;background:linear-gradient(105deg,#153a31,#17684d);color:#fff;padding:25px 30px;display:flex;align-items:center;justify-content:space-between;gap:20px;overflow:hidden}
+.promo h3{font-size:22px;margin:0 0 5px}.promo p{margin:0;color:#d4eadf;font-size:12px}
+.promo a{background:#fff;color:#14513c;padding:12px 17px;border-radius:11px;font-size:12px;font-weight:850;white-space:nowrap}
+
+footer{background:var(--navy);color:#fff;margin-top:38px}
+.foot{max-width:1450px;margin:auto;padding:32px 5%;display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:30px}
+.foot h4{margin:0 0 12px;font-size:14px}.foot p,.foot a{color:#c5d2df;font-size:12px;line-height:1.8}
+.copyright{border-top:1px solid #ffffff20;padding:14px 5%;text-align:center;color:#9fb1c1;font-size:10px}
+.whatsapp-float{position:fixed;right:22px;bottom:22px;z-index:20;background:#16a765;color:#fff;border-radius:999px;padding:14px 18px;box-shadow:0 10px 28px #08784750;font-size:12px;font-weight:850}
+
+/* Modals */
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(16,36,58,0.6); backdrop-filter:blur(4px); z-index:100; justify-content:center; align-items:center; padding:15px; }
+.modal-box { background:#fff; width:100%; max-width:500px; border-radius:20px; padding:25px; box-shadow:0 20px 40px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; }
+.modal-box h3 { margin-top:0; color:var(--navy); font-size:20px; margin-bottom:15px; }
+.form-group { margin-bottom:12px; }
+.form-group label { display:block; font-size:11px; font-weight:800; color:var(--muted); margin-bottom:4px; text-transform:uppercase; }
+.form-group input, .form-group textarea { width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:10px; font-size:13px; outline:none; font-family:inherit; }
+.form-group input:focus, .form-group textarea:focus { border-color:var(--orange); }
+.modal-btns { display:flex; gap:10px; margin-top:20px; justify-content:flex-end; }
+
+@media(max-width:1050px){.products{grid-template-columns:repeat(3,minmax(0,1fr))}.brand{min-width:210px}.head{gap:15px}.hero-copy{padding:35px}}
+@media(max-width:760px){.topbar{padding:9px 4%;font-size:10px}.topbar span:last-child{display:none}.head{padding:13px 4%;flex-wrap:wrap;gap:12px}.brand{min-width:0;flex:1}.brand-name{font-size:18px}.search{order:3;flex-basis:100%;height:44px}.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.section-head h2{font-size:20px}main{padding:0 4%;margin-top:17px}.promo{padding:22px;align-items:flex-start;flex-direction:column}.foot{grid-template-columns:1fr;gap:17px;padding:27px 5%}}
+@media(max-width:380px){.products{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="topbar"><span>🚚 <strong id="topbarTitle">KUENJUNG AUTO SPARE</strong> &nbsp;|&nbsp; <span id="topbarSub">SsangYong vehicle parts specialist</span></span><span>OLAKHA, THIMPHU &nbsp; • &nbsp; BHUTAN</span></div>
+<header><div class="head">
+<a class="brand" href="#">
+  <div class="logo" id="logoBox"><span id="logoInitial">⚙</span></div>
+  <div><div class="brand-name" id="brandTitleMain">KUENJUNG <span>AUTO SPARE</span></div><div class="tagline" id="brandTagline">Your SsangYong parts specialist</div></div>
+</a>
+<label class="search"><span>⌕</span><input id="search" type="search" placeholder="Search parts, e.g. Brake Pad, Oil Filter..."></label>
+<div class="head-actions">
+  <button class="pill orange" onclick="openAddModal()">+ Add Part</button>
+  <button class="pill purple" onclick="openDesignerModal()">🎨 Design Theme</button>
+  <a class="pill dark" href="https://wa.me/97517505603" target="_blank" rel="noopener">WhatsApp Us ↗</a>
+</div>
+</div></header>
+
+<main>
+<section class="hero">
+<div class="hero-copy">
+  <div class="eyebrow" id="heroEyebrow">Specialist SsangYong spare parts • Olakha, Thimphu</div>
+  <h1 id="heroTitle">Find the right parts.<br><span id="heroSpan">Keep moving.</span></h1>
+  <p id="heroDesc">Explore our inventory. Manage stock, upload photos, and update details seamlessly with unlimited browser storage.</p>
+  <a class="cta" href="#catalogue">Explore Parts <span>→</span></a>
+</div>
+<div class="hero-art"><div class="gear">⚙</div></div>
+</section>
+
+<section class="trust">
+<div class="trust-card"><div class="trust-icon">🚘</div><div><b>SsangYong Focused</b><small>Parts for selected SsangYong models</small></div></div>
+<div class="trust-card"><div class="trust-icon">📍</div><div><b>Visit Our Shop</b><small>Olakha, Thimphu, Bhutan</small></div></div>
+<div class="trust-card"><div class="trust-icon">💬</div><div><b>Quick Enquiries</b><small>Message us directly on WhatsApp</small></div></div>
+</section>
+
+<section id="catalogue">
+<div class="section-head"><div><h2>Spare Parts Catalogue</h2><p>Browse, edit, add parts, and upload photos.</p></div><div class="count" id="count"></div></div>
+<div class="filters" id="filters">
+<button class="filter active" data-filter="all">All Parts</button>
+<button class="filter" data-filter="Korando">Korando</button>
+<button class="filter" data-filter="Tivoli">Tivoli / XLV</button>
+<button class="filter" data-filter="Rexton">Rexton</button>
+<button class="filter" data-filter="Actyon">Actyon</button>
+<button class="filter" data-filter="Musso">Musso</button>
+<button class="filter" data-filter="Starvic">Other Models</button>
+</div>
+<div class="products" id="products"></div>
+</section>
+
+<section class="promo"><div><h3>Need help finding a part?</h3><p>Send us your vehicle model and the part you need. We'll help you check compatibility and availability.</p></div><a href="https://wa.me/97517505603?text=Hello%20KUENJUNG%20AUTO%20SPARE%2C%20I%20need%20help%20finding%20a%20SsangYong%20part." target="_blank" rel="noopener">Chat on WhatsApp ↗</a></section>
+</main>
+
+<footer><div class="foot">
+<div><h4 id="footTitle">KUENJUNG AUTO SPARE</h4><p id="footDesc">Your SsangYong parts specialist in Bhutan. Browse our catalogue and contact us for fitment and stock confirmation.</p></div>
+<div><h4>Visit Us</h4><p>Olakha, Thimphu<br>Bhutan</p></div>
+<div><h4>Contact</h4><p>WhatsApp: <a href="https://wa.me/97517505603">+975 17505603</a><br><a href="https://wa.me/97517505603">Send us a WhatsApp message ↗</a></p></div>
+</div><div class="copyright">© <span id="year"></span> KUENJUNG AUTO SPARE. All rights reserved.</div></footer>
+
+<a class="whatsapp-float" href="https://wa.me/97517505603" target="_blank" rel="noopener">☏ WhatsApp</a>
+
+<!-- Hidden file input for handling custom picture uploads -->
+<input type="file" id="imageUploadInput" accept="image/*" style="display:none" onchange="processImageUpload(event)">
+<input type="file" id="logoUploadInput" accept="image/*" style="display:none" onchange="processLogoUpload(event)">
+
+<!-- Add/Edit Part Modal -->
+<div class="modal" id="partModal">
+  <div class="modal-box">
+    <h3 id="modalTitle">Add New Spare Part</h3>
+    <input type="hidden" id="editIndex" value="-1">
+    <div class="form-group"><label>Part Name</label><input type="text" id="pName" placeholder="e.g. Brake Pad"></div>
+    <div class="form-group"><label>Vehicle Model</label><input type="text" id="pVehicle" placeholder="e.g. Tivoli / Rexton"></div>
+    <div class="form-group"><label>Quantity</label><input type="text" id="pQty" placeholder="e.g. 10 or 2 sets"></div>
+    <div class="form-group"><label>Price (Nu.)</label><input type="number" id="pPrice" placeholder="e.g. 2500"></div>
+    <div class="form-group"><label>Remarks / Position</label><input type="text" id="pRemarks" placeholder="e.g. Front / Left"></div>
+    <div class="modal-btns">
+      <button class="pill" onclick="closeModal()">Cancel</button>
+      <button class="pill orange" onclick="savePart()">Save Part</button>
+    </div>
+  </div>
+</div>
+
+<!-- Front Page Designer Modal -->
+<div class="modal" id="designerModal">
+  <div class="modal-box">
+    <h3>🎨 Front Page Designer</h3>
+    <div class="form-group"><label>Company Name</label><input type="text" id="cfgBrandName" placeholder="KUENJUNG"></div>
+    <div class="form-group"><label>Company Highlight Name</label><input type="text" id="cfgBrandSpan" placeholder="AUTO SPARE"></div>
+    <div class="form-group"><label>Tagline / Subtitle</label><input type="text" id="cfgTagline" placeholder="Your SsangYong parts specialist"></div>
+    <div class="form-group"><label>Hero Main Title</label><input type="text" id="cfgHeroMain" placeholder="Find the right parts."></div>
+    <div class="form-group"><label>Hero Highlight Title</label><input type="text" id="cfgHeroSpan" placeholder="Keep moving."></div>
+    <div class="form-group"><label>Primary Theme Color</label><input type="color" id="cfgNavy" value="#10243a" style="height:40px; padding:2px;"></div>
+    <div class="form-group"><label>Accent Orange Color</label><input type="color" id="cfgOrange" value="#f47721" style="height:40px; padding:2px;"></div>
+    <div class="form-group">
+      <label>Company Logo Image</label>
+      <button class="pill dark" onclick="document.getElementById('logoUploadInput').click()">📁 Upload Logo Image</button>
+    </div>
+    <div class="modal-btns">
+      <button class="pill" onclick="closeDesignerModal()">Cancel</button>
+      <button class="pill orange" onclick="saveDesignerSettings()">Apply Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const initialDataset = [{"name": "Bush Trailing", "vehicle": "Korando", "quantity": 15, "price": 2200, "remarks": "", "img": ""}, {"name": "Front lower Arm Bush", "vehicle": "Tivoli", "quantity": 5, "price": 2950, "remarks": "", "img": ""}, {"name": "Lower Arm Bush (Set) Big / Small", "vehicle": "Rexton/Actyon", "quantity": 11, "price": 2800, "remarks": "Big", "img": ""}, {"name": "Bushing Rear", "vehicle": "Rexton/Actyon", "quantity": 14, "price": 1800, "remarks": "", "img": ""}, {"name": "Lower Arm Bush", "vehicle": "Rexton/Actyon", "quantity": 6, "price": 1800, "remarks": "", "img": ""}, {"name": "Lower Arm Bush", "vehicle": "Rexton/Actyon", "quantity": 5, "price": 1800, "remarks": "", "img": ""}, {"name": "Front lower Arm Bush", "vehicle": "Rexton/Actyon", "quantity": 5, "price": 1800, "remarks": "", "img": ""}, {"name": "Front lower Arm Bush", "vehicle": "Rexton/Actyon", "quantity": 7, "price": 1800, "remarks": "", "img": ""}, {"name": "Bush Assy Front Lower Arm", "vehicle": "Korando", "quantity": 1, "price": 2800, "remarks": "", "img": ""}, {"name": "Bush Front Upper Arm", "vehicle": "Rexton/Actyon", "quantity": 10, "price": 1500, "remarks": "", "img": ""}, {"name": "Bush Front Lower Arm", "vehicle": "Tivoli", "quantity": 5, "price": 3500, "remarks": "", "img": ""}, {"name": "Stopper", "vehicle": "Please confirm vehicle compatibility", "quantity": 17, "price": 1800, "remarks": "", "img": ""}, {"name": "Body Bush", "vehicle": "Rexton/Actyon", "quantity": 9, "price": 1500, "remarks": "", "img": ""}, {"name": "Front Shock Absorber Bush", "vehicle": "Rexton/Actyon", "quantity": 2, "price": 1200, "remarks": "", "img": ""}, {"name": "Head Gasket", "vehicle": "Korando(Petrol)", "quantity": 2, "price": 5800, "remarks": "", "img": ""}, {"name": "Head Gasket", "vehicle": "Tivoli /XLV", "quantity": 1, "price": 5800, "remarks": "", "img": ""}, {"name": "Head Gasket", "vehicle": "Korando(Diesel)", "quantity": 2, "price": 5800, "remarks": "", "img": ""}, {"name": "Head Gasket", "vehicle": "Rexton", "quantity": 1, "price": 6000, "remarks": "", "img": ""}, {"name": "Head Gasket", "vehicle": "Musso", "quantity": 1, "price": 6000, "remarks": "", "img": ""}, {"name": "Lifter Assy", "vehicle": "Rexton", "quantity": 6, "price": 2850, "remarks": "Hood", "img": ""}, {"name": "Lifter Assy", "vehicle": "Korando", "quantity": 2, "price": 2850, "remarks": "Tailgate", "img": ""}, {"name": "Brake Pad", "vehicle": "Korando", "quantity": 8, "price": 6000, "remarks": "Front ( In 1 Box)", "img": ""}, {"name": "Brake Pad", "vehicle": "Rexton", "quantity": 5, "price": 6000, "remarks": "Front", "img": ""}, {"name": "Brake Pad", "vehicle": "Tivoli /XLV", "quantity": 9, "price": 6000, "remarks": "Front", "img": ""}, {"name": "Brake Pad", "vehicle": "Rexton 1", "quantity": 5, "price": 6000, "remarks": "Front", "img": ""}, {"name": "Brake Pad", "vehicle": "Starvic", "quantity": 14, "price": 5200, "remarks": "", "img": ""}, {"name": "Brake Pad", "vehicle": "Tivoli /XLV", "quantity": 8, "price": 5200, "remarks": "Rear", "img": ""}, {"name": "Brake Pad", "vehicle": "Rexton 2", "quantity": 6, "price": 5200, "remarks": "Rear", "img": ""}, {"name": "Brake Pad", "vehicle": "Musso", "quantity": 5, "price": 5200, "remarks": "Rear", "img": ""}, {"name": "Brake Shoe", "vehicle": "Korando", "quantity": 2, "price": 9800, "remarks": "2010-2012", "img": ""}, {"name": "Brake shoe", "vehicle": "Actyon/Rexton", "quantity": 4, "price": 8500, "remarks": "Disk", "img": ""}, {"name": "Brake shoe", "vehicle": "Actyon/Rexton", "quantity": 1, "price": 8500, "remarks": "Drum", "img": ""}, {"name": "Oil Filter", "vehicle": "Actyon/Rexton", "quantity": 2, "price": 1500, "remarks": "", "img": ""}, {"name": "Oil Filter", "vehicle": "Musso", "quantity": 3, "price": 1500, "remarks": "", "img": ""}, {"name": "Oil Filter", "vehicle": "Rexton", "quantity": 16, "price": 1500, "remarks": "", "img": ""}, {"name": "Oil Filter", "vehicle": "Korendo", "quantity": 3, "price": 1500, "remarks": "Petrol", "img": ""}, {"name": "Oil Filter", "vehicle": "Korendo", "quantity": 2, "price": 1500, "remarks": "Diesel", "img": ""}, {"name": "Fuel Filter", "vehicle": "Stravic", "quantity": 3, "price": 4500, "remarks": "", "img": ""}, {"name": "Water Separator", "vehicle": "Actyon/Rexton", "quantity": 4, "price": 4500, "remarks": "", "img": ""}, {"name": "Diesel Filter", "vehicle": "Actyon/Rexton", "quantity": 4, "price": 4800, "remarks": "", "img": ""}, {"name": "Fuel Filter", "vehicle": "Tivoli", "quantity": 3, "price": 7000, "remarks": "Diesel", "img": ""}, {"name": "Air Filter", "vehicle": "Rexton", "quantity": 4, "price": 1800, "remarks": "", "img": ""}, {"name": "Air Filter", "vehicle": "Musso", "quantity": 3, "price": 1800, "remarks": "", "img": ""}, {"name": "Air Filter", "vehicle": "Tivoli", "quantity": 2, "price": 1800, "remarks": "", "img": ""}, {"name": "Air Filter", "vehicle": "Korendo", "quantity": 1, "price": 1800, "remarks": "", "img": ""}, {"name": "AC Filter", "vehicle": "Tivoli", "quantity": 4, "price": 1500, "remarks": "", "img": ""}, {"name": "AC Filter", "vehicle": "Korendo", "quantity": 8, "price": 1500, "remarks": "", "img": ""}, {"name": "AC Filter", "vehicle": "Rexton", "quantity": 7, "price": 4800, "remarks": "", "img": ""}, {"name": "Tapid Rubber", "vehicle": "Tivoli", "quantity": 5, "price": 2800, "remarks": "", "img": ""}, {"name": "Tapid Rubber", "vehicle": "Rexton", "quantity": 3, "price": 3000, "remarks": "", "img": ""}, {"name": "Tapid Rubber", "vehicle": "Korendo", "quantity": 2, "price": 2800, "remarks": "", "img": ""}, {"name": "Tapid Rubber", "vehicle": "Musso", "quantity": 2, "price": 3000, "remarks": "", "img": ""}, {"name": "Glow Plug", "vehicle": "Musso", "quantity": 19, "price": 1900, "remarks": "", "img": ""}, {"name": "Glow Plug", "vehicle": "Tivoli", "quantity": 4, "price": 2900, "remarks": "", "img": ""}, {"name": "Glow Plug", "vehicle": "Rx G4", "quantity": 3, "price": 2800, "remarks": "", "img": ""}, {"name": "Glow Plug", "vehicle": "Korendo", "quantity": 16, "price": 1500, "remarks": "", "img": ""}, {"name": "Glow Plug", "vehicle": "Actyon", "quantity": 16, "price": 1500, "remarks": "", "img": ""}, {"name": "Solenoid Valve", "vehicle": "Korando/Tiv Petrol", "quantity": 4, "price": 3500, "remarks": "", "img": ""}, {"name": "Pully", "vehicle": "Actyon/Rexton", "quantity": 2, "price": 2500, "remarks": "", "img": ""}, {"name": "Pully", "vehicle": "Actyon/Rexton", "quantity": 1, "price": 2500, "remarks": "", "img": ""}, {"name": "Key Shell", "vehicle": "Actyon/Rexton", "quantity": 1, "price": 2500, "remarks": "", "img": ""}, {"name": "Injector Harness", "vehicle": "Actyon/Rexton", "quantity": 2, "price": 1500, "remarks": "", "img": ""}, {"name": "Switch Assy", "vehicle": "Please confirm vehicle compatibility", "quantity": 3, "price": 2500, "remarks": "", "img": ""}, {"name": "Brake Paddle", "vehicle": "Tivoli", "quantity": 1, "price": 3500, "remarks": "", "img": ""}, {"name": "Sensor Assy Water Temp", "vehicle": "Rexton", "quantity": 1, "price": 2500, "remarks": "", "img": ""}, {"name": "Switch Assy", "vehicle": "Korando", "quantity": 1, "price": 4500, "remarks": "", "img": ""}, {"name": "Ignition Coil", "vehicle": "Tivoli", "quantity": 1, "price": 4800, "remarks": "", "img": ""}, {"name": "Handle Assy", "vehicle": "Tivoli", "quantity": 1, "price": 6500, "remarks": "Front left", "img": ""}, {"name": "Handle Assy", "vehicle": "Please confirm vehicle compatibility", "quantity": 1, "price": 6500, "remarks": "Rear Right", "img": ""}, {"name": "Radiator Cap", "vehicle": "Actyon/Rexton", "quantity": 1, "price": 1500, "remarks": "", "img": ""}, {"name": "Clutch Plate", "vehicle": "Tivoli", "quantity": 2, "price": 30000, "remarks": "Set", "img": ""}, {"name": "Clutch Plate", "vehicle": "Please confirm vehicle compatibility", "quantity": 2, "price": 30000, "remarks": "Set", "img": ""}, {"name": "Clutch Plate", "vehicle": "Korando", "quantity": 2, "price": 30000, "remarks": "Set", "img": ""}, {"name": "Clutch Plate", "vehicle": "Kryon/Actyon", "quantity": 2, "price": 30000, "remarks": "Set", "img": ""}, {"name": "Release Bearing", "vehicle": "Actyon/Rexton", "quantity": 2, "price": 9500, "remarks": "", "img": ""}, {"name": "Release Bearing", "vehicle": "Tivoli", "quantity": 2, "price": 9000, "remarks": "", "img": ""}, {"name": "Release Bearing", "vehicle": "Korando", "quantity": 1, "price": 9000, "remarks": "", "img": ""}, {"name": "Hub Assy", "vehicle": "Korando", "quantity": 2, "price": 10500, "remarks": "", "img": ""}, {"name": "Calliper", "vehicle": "Kyron/Rexton", "quantity": 2, "price": 14000, "remarks": "", "img": ""}, {"name": "Piston Assy", "vehicle": "Korando", "quantity": 1, "price": 9500, "remarks": "", "img": ""}, {"name": "Fog Lamp Assy", "vehicle": "Rexton", "quantity": 1, "price": 5500, "remarks": "", "img": ""}, {"name": "Calliper Assy", "vehicle": "Tivoli", "quantity": 1, "price": 16000, "remarks": "Left", "img": ""}, {"name": "Calliper Assy", "vehicle": "Tivoli", "quantity": 1, "price": 16000, "remarks": "Right", "img": ""}, {"name": "Steering Shaft", "vehicle": "Rexton/Actyon", "quantity": 1, "price": 16500, "remarks": "", "img": ""}, {"name": "Fog Lamp assy", "vehicle": "Musso", "quantity": 1, "price": 4800, "remarks": "", "img": ""}, {"name": "Thermo Strat", "vehicle": "Musso", "quantity": 1, "price": 4500, "remarks": "", "img": ""}, {"name": "Thermo Strat", "vehicle": "Tivoli", "quantity": 1, "price": 7800, "remarks": "", "img": ""}, {"name": "Thermo Strat", "vehicle": "Korando", "quantity": 1, "price": 6500, "remarks": "", "img": ""}, {"name": "Water Pump", "vehicle": "Tivoli", "quantity": 1, "price": 9500, "remarks": "", "img": ""}, {"name": "Self Starter", "vehicle": "Korando", "quantity": 1, "price": 23500, "remarks": "", "img": ""}, {"name": "Heater Core", "vehicle": "Tivoli", "quantity": 1, "price": 13000, "remarks": "", "img": ""}, {"name": "Ac Pipe", "vehicle": "Actyon", "quantity": 1, "price": 5500, "remarks": "", "img": ""}, {"name": "Petrol Filter Assy", "vehicle": "Tivoli", "quantity": 3, "price": 4900, "remarks": "", "img": ""}, {"name": "Belt Tensioner", "vehicle": "Korando", "quantity": 1, "price": 7800, "remarks": "", "img": ""}, {"name": "Belt Tensioner", "vehicle": "Tivoli", "quantity": 2, "price": 10500, "remarks": "", "img": ""}, {"name": "Latch Assy", "vehicle": "Rexton/Actyon", "quantity": 5, "price": 6500, "remarks": "Front Door Left", "img": ""}, {"name": "Contact Coil", "vehicle": "Korando", "quantity": 1, "price": 8500, "remarks": "", "img": ""}, {"name": "Contact Coil", "vehicle": "Tivoli", "quantity": 1, "price": 10500, "remarks": "", "img": ""}, {"name": "Actuator Assy", "vehicle": "Korando/Stravic", "quantity": 3, "price": 14000, "remarks": "", "img": ""}, {"name": "Wheel Bearing", "vehicle": "Tivoli", "quantity": 2, "price": 10800, "remarks": "", "img": ""}, {"name": "Engine Oil Cooler", "vehicle": "Rexton/Actyon", "quantity": 2, "price": 13500, "remarks": "", "img": ""}, {"name": "Engine Oil Cooler", "vehicle": "Korando", "quantity": 1, "price": 13500, "remarks": "", "img": ""}, {"name": "Switch Assy Main", "vehicle": "Musso", "quantity": 1, "price": 6500, "remarks": "", "img": ""}, {"name": "Latch Assy", "vehicle": "Tivoli", "quantity": 1, "price": 5500, "remarks": "Tail Gate", "img": ""}, {"name": "Contact Coil", "vehicle": "Kyron/Rexton", "quantity": 1, "price": 10500, "remarks": "", "img": ""}, {"name": "Oil Pump", "vehicle": "Actyon", "quantity": 1, "price": 22000, "remarks": "", "img": ""}, {"name": "Engine Mount", "vehicle": "Korando", "quantity": 3, "price": 6500, "remarks": "", "img": ""}, {"name": "Bumper Assy", "vehicle": "Musso", "quantity": 1, "price": 2800, "remarks": "Rear Bush", "img": ""}, {"name": "Brake Disk", "vehicle": "Rex 1/ Musso", "quantity": 2, "price": 12000, "remarks": "", "img": ""}, {"name": "Arm Assy", "vehicle": "Rexton W. KOR", "quantity": 2, "price": 19000, "remarks": "", "img": ""}, {"name": "Switch Assy Main", "vehicle": "Rexton 1", "quantity": 1, "price": 7000, "remarks": "", "img": ""}, {"name": "Fan Belt", "vehicle": "Tivoli", "quantity": 9, "price": 3500, "remarks": "", "img": ""}, {"name": "Fan Belt", "vehicle": "Rexton", "quantity": 1, "price": 4000, "remarks": "", "img": ""}, {"name": "Fan Belt", "vehicle": "Korando", "quantity": 2, "price": 3500, "remarks": "Petrol", "img": ""}, {"name": "Fan Belt", "vehicle": "Korando", "quantity": 3, "price": 3500, "remarks": "Diesel", "img": ""}, {"name": "Fan Belt", "vehicle": "Musso", "quantity": 2, "price": 4000, "remarks": "With AC", "img": ""}, {"name": "Fan Belt", "vehicle": "Musso", "quantity": 2, "price": 4000, "remarks": "Without AC", "img": ""}, {"name": "Seal Assy", "vehicle": "Korando/Tivoli/XLV", "quantity": 6, "price": 7500, "remarks": "", "img": ""}, {"name": "Clutch Master Cylinder", "vehicle": "Actyon", "quantity": 3, "price": 7500, "remarks": "", "img": ""}, {"name": "Clutch Master Cylinder", "vehicle": "Musso", "quantity": 2, "price": 4800, "remarks": "Lower", "img": ""}, {"name": "Clutch Master Cylinder", "vehicle": "Musso", "quantity": 1, "price": 9500, "remarks": "Upper", "img": ""}, {"name": "Clutch Master Cylinder", "vehicle": "Rexton", "quantity": 4, "price": 9000, "remarks": "Upper", "img": ""}, {"name": "AC Filter", "vehicle": "Actyon", "quantity": 15, "price": 4800, "remarks": "", "img": ""}, {"name": "Clutch Master Cylinder", "vehicle": "Korando", "quantity": 3, "price": 9500, "remarks": "Upper", "img": ""}, {"name": "Wheel Speed Sensor", "vehicle": "Korando", "quantity": 1, "price": 6500, "remarks": "", "img": ""}, {"name": "Regulator Window", "vehicle": "Tivoli", "quantity": 2, "price": 4800, "remarks": "Right Rear", "img": ""}, {"name": "Regulator Window", "vehicle": "Rexton", "quantity": 2, "price": 5600, "remarks": "Right Rear", "img": ""}, {"name": "Regulator Window", "vehicle": "Rexton", "quantity": 2, "price": 5600, "remarks": "Front", "img": ""}, {"name": "Regulator Window", "vehicle": "Rexton", "quantity": 1, "price": 5600, "remarks": "Front", "img": ""}, {"name": "Regulator Window", "vehicle": "Tivoli", "quantity": 1, "price": 4800, "remarks": "Rear", "img": ""}, {"name": "Cable hood Latch", "vehicle": "Musso", "quantity": 1, "price": 2500, "remarks": "", "img": ""}, {"name": "Wind Sheild Moulding", "vehicle": "Korando", "quantity": 1, "price": 4500, "remarks": "", "img": ""}, {"name": "Air Filter", "vehicle": "Rexton", "quantity": 11, "price": 1800, "remarks": "", "img": ""}, {"name": "Power Window Switch", "vehicle": "Rexton 1", "quantity": 1, "price": 4800, "remarks": "", "img": ""}, {"name": "Latch & Cable Assy", "vehicle": "Korando", "quantity": 2, "price": 6500, "remarks": "Front Door R", "img": ""}, {"name": "Latch & Cable Assy", "vehicle": "Actyon Sportz", "quantity": 2, "price": 6500, "remarks": "Tailgate R", "img": ""}, {"name": "Latch Assy", "vehicle": "Please confirm vehicle compatibility", "quantity": 1, "price": 3500, "remarks": "Tailgate", "img": ""}, {"name": "Latch & Cable Assy", "vehicle": "Korando", "quantity": 1, "price": 6500, "remarks": "", "img": ""}, {"name": "Cable Assy", "vehicle": "Rexton", "quantity": 1, "price": 3500, "remarks": "", "img": ""}, {"name": "Rack End Assy", "vehicle": "Rexton/actyon", "quantity": 5, "price": 3500, "remarks": "", "img": ""}, {"name": "Link Rod", "vehicle": "Tivoli/XLV", "quantity": 10, "price": 3500, "remarks": "", "img": ""}, {"name": "Link Rod", "vehicle": "Korando", "quantity": 4, "price": 3500, "remarks": "", "img": ""}, {"name": "Tierod End Assy", "vehicle": "Tivoli/XLV", "quantity": 9, "price": 3500, "remarks": "Left", "img": ""}, {"name": "Tierod End Assy", "vehicle": "Tivoli/XLV", "quantity": 1, "price": 3500, "remarks": "Right", "img": ""}, {"name": "Tierod End Assy", "vehicle": "Rexton/actyon", "quantity": 5, "price": 3500, "remarks": "Left", "img": ""}, {"name": "Tierod End Assy", "vehicle": "Rexton/actyon", "quantity": 2, "price": 3500, "remarks": "Right", "img": ""}, {"name": "Link Stablizer", "vehicle": "Rexton/actyon", "quantity": 4, "price": 2200, "remarks": "Right", "img": ""}, {"name": "Link Stablizer", "vehicle": "Rexton/actyon", "quantity": 10, "price": 2200, "remarks": "Left", "img": ""}, {"name": "Link Rod", "vehicle": "Musso", "quantity": 2, "price": 2000, "remarks": "", "img": ""}, {"name": "Link Rod", "vehicle": "Korando", "quantity": 3, "price": 2200, "remarks": "Rear", "img": ""}, {"name": "D Bush", "vehicle": "Rexton/actyon", "quantity": 22, "price": 1200, "remarks": "Front", "img": ""}, {"name": "D Bush", "vehicle": "Rexton/actyon", "quantity": 13, "price": 1000, "remarks": "Rear", "img": ""}, {"name": "D Bush", "vehicle": "Tivoli/XLV", "quantity": 11, "price": 1200, "remarks": "Front", "img": ""}, {"name": "D Bush( set)", "vehicle": "Korando", "quantity": 4, "price": 2200, "remarks": "Set", "img": ""}, {"name": "Stablizer Link Rod Bush", "vehicle": "Rexton/actyon", "quantity": 20, "price": 350, "remarks": "", "img": ""}, {"name": "Bonnet Rubber", "vehicle": "Rexton/actyon", "quantity": 5, "price": 300, "remarks": "", "img": ""}, {"name": "CV joint Boot", "vehicle": "Rexton/actyon/Kor", "quantity": 7, "price": 2800, "remarks": "", "img": ""}, {"name": "Bonnet Adjustor", "vehicle": "Musso", "quantity": 10, "price": 500, "remarks": "", "img": ""}, {"name": "Alternator Pully", "vehicle": "Rexton/Actyon", "quantity": 1, "price": 8500, "remarks": "", "img": ""}, {"name": "Bolt joint", "vehicle": "Korando", "quantity": 7, "price": 3200, "remarks": "", "img": ""}, {"name": "Bolt joint", "vehicle": "Tivoli/XLV", "quantity": 4, "price": 3500, "remarks": "", "img": ""}, {"name": "Bolt Joint", "vehicle": "rexton/actyon", "quantity": 5, "price": 3500, "remarks": "Lower Arms", "img": ""}, {"name": "Bolt Joint", "vehicle": "Musso", "quantity": 3, "price": 3500, "remarks": "Upper Arms", "img": ""}, {"name": "Bolt joint", "vehicle": "Musso", "quantity": 1, "price": 3500, "remarks": "Lower Arms", "img": ""}, {"name": "Tierod End Assy", "vehicle": "Korando", "quantity": 4, "price": 3800, "remarks": "", "img": ""}, {"name": "Tierod End Assy", "vehicle": "Musso", "quantity": 3, "price": 3500, "remarks": "", "img": ""}, {"name": "Lamp Reflector", "vehicle": "Actyon Sportz", "quantity": 4, "price": 800, "remarks": "Right", "img": ""}, {"name": "Tailgate wiper", "vehicle": "Tivoli/XLV", "quantity": 2, "price": 3500, "remarks": "", "img": ""}, {"name": "Shaft assy Steering", "vehicle": "Musso", "quantity": 1, "price": 12000, "remarks": "", "img": ""}, {"name": "D bush Clamp", "vehicle": "Korando", "quantity": 5, "price": 1200, "remarks": "", "img": ""}, {"name": "Rear Hub Bearing", "vehicle": "Actyon /Rexton", "quantity": 4, "price": 6000, "remarks": "", "img": ""}, {"name": "Wheel cover", "vehicle": "Rexton 1", "quantity": 3, "price": 1800, "remarks": "", "img": ""}, {"name": "Bonnet Hinge", "vehicle": "Musso", "quantity": 10, "price": 950, "remarks": "", "img": ""}, {"name": "Wiper Tank", "vehicle": "Korando", "quantity": 3, "price": 15000, "remarks": "", "img": ""}, {"name": "Wiper Tank Cap", "vehicle": "KOR/XLV/TIV", "quantity": null, "price": null, "remarks": "", "img": ""}, {"name": "Quater Glass", "vehicle": "Rexton", "quantity": 5, "price": 8500, "remarks": "", "img": ""}, {"name": "Tailgate quater Glass", "vehicle": "Rexton", "quantity": 1, "price": 8500, "remarks": "", "img": ""}, {"name": "Power Window Motor", "vehicle": "Rexton", "quantity": 1, "price": 6500, "remarks": "", "img": ""}, {"name": "Power Window Motor", "vehicle": "Tivoli/XLV", "quantity": 1, "price": 4500, "remarks": "Right", "img": ""}, {"name": "Power window Motor", "vehicle": "Tivoli/XLV", "quantity": 1, "price": 4500, "remarks": "Left", "img": ""}, {"name": "Brkt Trailing Arm", "vehicle": "Korando", "quantity": 6, "price": 6000, "remarks": "", "img": ""}, {"name": "Air Filter", "vehicle": "Rexton", "quantity": 1, "price": 1700, "remarks": "petrol", "img": ""}, {"name": "Rain Guard", "vehicle": "Acty/sportz", "quantity": "2 sets", "price": 4500, "remarks": "", "img": ""}, {"name": "Rain Guard", "vehicle": "Rexton", "quantity": "2 sets", "price": 4500, "remarks": "", "img": ""}, {"name": "Rain Guard", "vehicle": "Korando", "quantity": 1, "price": 4500, "remarks": "", "img": ""}, {"name": "Weather Strip", "vehicle": "Rexton", "quantity": "1 set", "price": null, "remarks": "inner", "img": ""}, {"name": "Air Filter", "vehicle": "Actyon", "quantity": 10, "price": 1700, "remarks": "", "img": ""}];
+
+let items = [];
+let activeFilter = 'all';
+let currentPhotoIndex = null;
+const icons = ['⚙','🔧','🛠','🚘','🔩','🧰','⚡','🛞'];
+
+let siteConfig = {
+  brandName: "KUENJUNG",
+  brandSpan: "AUTO SPARE",
+  tagline: "Your SsangYong parts specialist",
+  heroMain: "Find the right parts.",
+  heroSpan: "Keep moving.",
+  heroDesc: "Explore our inventory. Manage stock, upload photos, and update details seamlessly with unlimited browser storage.",
+  navyColor: "#10243a",
+  orangeColor: "#f47721",
+  logoUrl: ""
+};
+
+// Save items & config to IndexedDB
+async function saveToDB() {
+  try {
+    await localforage.setItem('kuenjung_items_v2', items);
+    await localforage.setItem('kuenjung_config_v1', siteConfig);
+  } catch (err) {
+    console.error("Storage error:", err);
+  }
+}
+
+// Apply design settings to UI elements & CSS Variables
+function applyConfig() {
+  document.getElementById('topbarTitle').textContent = `${siteConfig.brandName} ${siteConfig.brandSpan}`;
+  document.getElementById('brandTitleMain').innerHTML = `${siteConfig.brandName} <span>${siteConfig.brandSpan}</span>`;
+  document.getElementById('brandTagline').textContent = siteConfig.tagline;
+  document.getElementById('heroEyebrow').textContent = `Specialist SsangYong spare parts • Olakha, Thimphu`;
+  document.getElementById('heroTitle').innerHTML = `${siteConfig.heroMain}<br><span>${siteConfig.heroSpan}</span>`;
+  document.getElementById('heroDesc').textContent = siteConfig.heroDesc;
+  document.getElementById('footTitle').textContent = `${siteConfig.brandName} ${siteConfig.brandSpan}`;
+  document.getElementById('footDesc').textContent = `Your SsangYong parts specialist in Bhutan. Browse our catalogue and contact us for fitment and stock confirmation.`;
+
+  // Apply Colors
+  document.documentElement.style.setProperty('--navy', siteConfig.navyColor);
+  document.documentElement.style.setProperty('--orange', siteConfig.orangeColor);
+
+  // Apply Logo
+  const logoBox = document.getElementById('logoBox');
+  if(siteConfig.logoUrl) {
+    logoBox.innerHTML = `<img src="${siteConfig.logoUrl}" alt="Logo">`;
+  } else {
+    logoBox.innerHTML = `⚙`;
+  }
+}
+
+// Compress uploaded photo to fit smoothly
+function compressAndSaveImage(file, callback) {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = function(e) {
+    const img = new Image();
+    img.src = e.target.result;
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+      const maxDim = 300;
+      if (width > height && width > maxDim) {
+        height = Math.round((height * maxDim) / width);
+        width = maxDim;
+      } else if (height > maxDim) {
+        width = Math.round((width * maxDim) / height);
+        height = maxDim;
+      }
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      callback(canvas.toDataURL('image/jpeg', 0.6));
+    };
+  };
+}
+
+function triggerPhotoUpload(index) {
+  currentPhotoIndex = index;
+  document.getElementById('imageUploadInput').click();
+}
+
+function processImageUpload(event) {
+  const file = event.target.files[0];
+  if (file && currentPhotoIndex !== null) {
+    compressAndSaveImage(file, async function(compressedUrl) {
+      items[currentPhotoIndex].img = compressedUrl;
+      await saveToDB();
+      render();
+      currentPhotoIndex = null;
+      event.target.value = '';
+    });
+  }
+}
+
+function processLogoUpload(event) {
+  const file = event.target.files[0];
+  if(file) {
+    compressAndSaveImage(file, function(compressedUrl) {
+      siteConfig.logoUrl = compressedUrl;
+      applyConfig();
+      saveToDB();
+    });
+  }
+}
+
+function money(v){return v===null?'Ask for price':'Nu. '+Number(v).toLocaleString('en-IN',{maximumFractionDigits:0});}
+
+function card(p,i){
+  const stock = p.quantity===null ? 'Check availability' : (String(p.quantity).toLowerCase().includes('set') ? 'Available' : (Number(p.quantity)>0?'In stock':'Check availability'));
+  const stockClass = stock==='In stock'||stock==='Available'?'':'ask';
+  const msg = `Hello KUENJUNG AUTO SPARE, I am enquiring about ${p.name} for ${p.vehicle}. Please confirm price and availability.`;
+  const imgContent = p.img ? `<img src="${p.img}" alt="${esc(p.name)}">` : `<div class="default-icon">${icons[i%icons.length]}</div>`;
+
+  return `<article class="product">
+    <div class="product-img-box">
+      ${imgContent}
+      <button class="photo-upload-btn" onclick="triggerPhotoUpload(${i})">📷 Photo</button>
+    </div>
+    <div class="product-content">
+      <div class="product-top"><span class="tag">SsangYong Parts</span></div>
+      <h3>${esc(p.name)}</h3>
+      <div class="fitment">${esc(p.vehicle)}</div>
+      ${p.remarks?`<div class="remark">${esc(p.remarks)}</div>`:''}
+      <div class="product-bottom">
+        <div>
+          <div class="price">${money(p.price)}</div>
+          <div class="stock ${stockClass}">${stock}</div>
+        </div>
+      </div>
+      <div class="admin-row">
+        <button class="btn-sm btn-edit" onclick="openEditModal(${i})">✏️ Edit</button>
+        <button class="btn-sm btn-del" onclick="deletePart(${i})">🗑️ Delete</button>
+      </div>
+      <a class="wa" href="https://wa.me/97517505603?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">💬 Enquire on WhatsApp</a>
+    </div>
+  </article>`;
+}
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function render(){
+  const searchInput = document.getElementById('search');
+  const q = searchInput ? searchInput.value.trim().toLowerCase() : '';
+  const shown = items.filter(p=>{
+    const text = (p.name+' '+p.vehicle+' '+p.remarks).toLowerCase();
+    const matchesQ = text.includes(q);
+    const matchesF = activeFilter==='all'||(activeFilter==='Starvic'&&!/Korando|Tivoli|XLV|Rexton|Actyon|Musso/i.test(p.vehicle))||p.vehicle.toLowerCase().includes(activeFilter.toLowerCase());
+    return matchesQ&&matchesF;
+  });
+  document.getElementById('count').textContent = shown.length+' items';
+  document.getElementById('products').innerHTML = shown.length ? shown.map((p,i)=>card(p,i)).join('') : '<div class="empty">No matching parts found. Try another search or contact us on WhatsApp.</div>';
+}
+
+// Modals management
+function openAddModal(){
+  document.getElementById('modalTitle').textContent = 'Add New Spare Part';
+  document.getElementById('editIndex').value = '-1';
+  document.getElementById('pName').value = '';
+  document.getElementById('pVehicle').value = '';
+  document.getElementById('pQty').value = '';
+  document.getElementById('pPrice').value = '';
+  document.getElementById('pRemarks').value = '';
+  document.getElementById('partModal').style.display = 'flex';
+}
+
+function openEditModal(i){
+  const p = items[i];
+  document.getElementById('modalTitle').textContent = 'Edit Spare Part';
+  document.getElementById('editIndex').value = i;
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pVehicle').value = p.vehicle;
+  document.getElementById('pQty').value = p.quantity !== null ? p.quantity : '';
+  document.getElementById('pPrice').value = p.price !== null ? p.price : '';
+  document.getElementById('pRemarks').value = p.remarks || '';
+  document.getElementById('partModal').style.display = 'flex';
+}
+
+function closeModal(){ document.getElementById('partModal').style.display = 'none'; }
+
+function openDesignerModal() {
+  document.getElementById('cfgBrandName').value = siteConfig.brandName;
+  document.getElementById('cfgBrandSpan').value = siteConfig.brandSpan;
+  document.getElementById('cfgTagline').value = siteConfig.tagline;
+  document.getElementById('cfgHeroMain').value = siteConfig.heroMain;
+  document.getElementById('cfgHeroSpan').value = siteConfig.heroSpan;
+  document.getElementById('cfgNavy').value = siteConfig.navyColor;
+  document.getElementById('cfgOrange').value = siteConfig.orangeColor;
+  document.getElementById('designerModal').style.display = 'flex';
+}
+
+function closeDesignerModal() { document.getElementById('designerModal').style.display = 'none'; }
+
+async function saveDesignerSettings() {
+  siteConfig.brandName = document.getElementById('cfgBrandName').value.trim() || "KUENJUNG";
+  siteConfig.brandSpan = document.getElementById('cfgBrandSpan').value.trim() || "AUTO SPARE";
+  siteConfig.tagline = document.getElementById('cfgTagline').value.trim();
+  siteConfig.heroMain = document.getElementById('cfgHeroMain').value.trim();
+  siteConfig.heroSpan = document.getElementById('cfgHeroSpan').value.trim();
+  siteConfig.navyColor = document.getElementById('cfgNavy').value;
+  siteConfig.orangeColor = document.getElementById('cfgOrange').value;
+
+  applyConfig();
+  await saveToDB();
+  closeDesignerModal();
+}
+
+async function savePart(){
+  const name = document.getElementById('pName').value.trim();
+  const vehicle = document.getElementById('pVehicle').value.trim();
+  const qtyVal = document.getElementById('pQty').value.trim();
+  const priceVal = document.getElementById('pPrice').value.trim();
+  const remarks = document.getElementById('pRemarks').value.trim();
+  const editIndex = parseInt(document.getElementById('editIndex').value);
+
+  if(!name || !vehicle){
+    alert('Please provide Part Name and Vehicle Model.');
+    return;
+  }
+
+  const quantity = isNaN(qtyVal) || qtyVal === '' ? qtyVal : Number(qtyVal);
+  const price = priceVal === '' ? null : Number(priceVal);
+
+  if(editIndex > -1){
+    items[editIndex].name = name;
+    items[editIndex].vehicle = vehicle;
+    items[editIndex].quantity = quantity;
+    items[editIndex].price = price;
+    items[editIndex].remarks = remarks;
+  } else {
+    items.unshift({ name, vehicle, quantity, price, remarks, img: '' });
+  }
+
+  await saveToDB();
+  closeModal();
+  render();
+}
+
+async function deletePart(i){
+  if(confirm(`Are you sure you want to delete "${items[i].name}"?`)){
+    items.splice(i, 1);
+    await saveToDB();
+    render();
+  }
+}
+
+document.getElementById('search').addEventListener('input', render);
+document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); activeFilter = b.dataset.filter; render();
+}));
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// Initialize data and configuration on page load
+window.addEventListener('DOMContentLoaded', async ()=>{
+  const savedItems = await localforage.getItem('kuenjung_items_v2');
+  const savedConfig = await localforage.getItem('kuenjung_config_v1');
+
+  if(savedItems && Array.isArray(savedItems) && savedItems.length > 0){
+    items = savedItems;
+  } else {
+    items = initialDataset;
+  }
+
+  if(savedConfig) {
+    siteConfig = savedConfig;
+  }
+
+  applyConfig();
+  await saveToDB();
+  render();
+});
+</script>
+</body>
+</html>
